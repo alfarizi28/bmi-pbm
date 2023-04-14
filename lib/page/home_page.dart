@@ -12,7 +12,7 @@ class HomePage extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'BMI Calculator',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.purple,
       ),
       home: const BMICalculator(),
     );
@@ -34,16 +34,17 @@ class _BMICalculatorState extends State<BMICalculator> {
       _heightController; // varibale bertipe controler yang digunakan untuk mengakses filed bagian height
   late double
       _bmiResult; // variable bertipe double untuk menampung hasil dari bmi
-  late String _bmiKeterangan;
+  late String
+      _bmiKeterangan; // variable bertipe stinrg untuk menampung keterangan dari hasil  bmi
 
   @override
   void initState() {
     // state saat variable text editing controler dimasukan class text editing controler
     super.initState();
-    _weightController =
-        TextEditingController(); // mamsukan class texeditingcontroler() kedalam variable
+    _weightController = TextEditingController();
+    // mamsukan class texeditingcontroler() kedalam variable
     _heightController = TextEditingController();
-    _bmiResult = 0.0;
+    _bmiResult = 0.0; // mensetup nilai default
     _bmiKeterangan = "";
   }
 
@@ -75,7 +76,7 @@ class _BMICalculatorState extends State<BMICalculator> {
                 crossAxisAlignment: CrossAxisAlignment.center, // arah konten
                 children: [
                   Text(
-                    'NAMA : ${User.name}',
+                    'Nama : ${User.name}',
                     style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w500,
@@ -154,31 +155,37 @@ class _BMICalculatorState extends State<BMICalculator> {
   }
 
   void _calculateBMI() {
+    //Variable
     String keteranganBMI = "";
     double weight = double.tryParse(_weightController.text) ??
         0.0; // variable bertipe double yang diambil dari hasil controler yang dibuat
     double height = double.tryParse(_heightController.text) ?? 0.0;
+
+    //Kondisi
     if (weight > 0 && height > 0) {
+      // buat variable sekaligus ngisi
       double bmi = weight /
           ((height / 100) *
               (height / 100)); // rumus bmi dengan tinggi dalam satuan m
 
+      //Kondisi untuk menentukan keterangan
       if (bmi < 18.5) {
         keteranganBMI = "Kurus";
       } else if (bmi >= 18.5 && bmi <= 24.9) {
-        keteranganBMI = "Normal atau sedang";
+        keteranganBMI = "Normal";
       } else if (bmi >= 25 && bmi <= 29.9) {
-        keteranganBMI = "Berat atau gemuk";
+        keteranganBMI = "gemuk";
       } else {
         keteranganBMI = "Obesitas";
       }
 
+      //Memasukan hasil kedalam variable
       setState(() {
         _bmiResult = bmi;
         _bmiKeterangan = keteranganBMI;
       });
     } else {
-      // Tampilkan pesan error jika username atau password salah
+      // Tampilkan pesan
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
