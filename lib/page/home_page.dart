@@ -34,6 +34,7 @@ class _BMICalculatorState extends State<BMICalculator> {
       _heightController; // varibale bertipe controler yang digunakan untuk mengakses filed bagian height
   late double
       _bmiResult; // variable bertipe double untuk menampung hasil dari bmi
+  late String _bmiKeterangan;
 
   @override
   void initState() {
@@ -43,6 +44,7 @@ class _BMICalculatorState extends State<BMICalculator> {
         TextEditingController(); // mamsukan class texeditingcontroler() kedalam variable
     _heightController = TextEditingController();
     _bmiResult = 0.0;
+    _bmiKeterangan = "";
   }
 
   @override
@@ -60,55 +62,99 @@ class _BMICalculatorState extends State<BMICalculator> {
         title: const Text('BMI Calculator'),
         automaticallyImplyLeading: false,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center, // arah konten
-          children: [
-            TextField(
-              controller:
-                  _weightController, // memasukan controler keadalam textfield
-              keyboardType: TextInputType.number, // memunculkan keyboard number
-              decoration: const InputDecoration(
-                labelText: 'Berat (kg)',
+      body: Container(
+        color: Colors.purple[300],
+        child: Center(
+          child: Card(
+            elevation: 8,
+            child: Container(
+              padding: const EdgeInsets.all(32.0),
+              constraints: const BoxConstraints(maxWidth: 350),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center, // arah konten
+                children: [
+                  Text(
+                    'NAMA : ${User.name}',
+                    style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black),
+                  ),
+                  const SizedBox(height: 24.0),
+                  TextField(
+                    controller:
+                        _weightController, // memasukan controler keadalam textfield
+                    keyboardType:
+                        TextInputType.number, // memunculkan keyboard number
+                    decoration: const InputDecoration(
+                      labelText: 'Weight (kg)',
+                      hintText: 'Enter your Weight',
+                      prefixIcon: Icon(Icons.person),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextField(
+                    controller: _heightController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: 'Height (cm)',
+                      hintText: 'Enter your Height',
+                      prefixIcon: Icon(Icons.person),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4)),
+                      ),
+                      onPressed: _calculateBMI,
+
+                      child: const Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Text(
+                          'Calculate',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ), // ketika button di klik maka akan menjalankan fungsi _submitForm
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 112, 33, 126),
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Text(
+                          // ignore: unnecessary_brace_in_string_interps
+                          'Result: ${_bmiResult.toStringAsFixed(2)},  ${_bmiKeterangan}', // menampulkan hasil bmi dengan format 2 angka belakang ,
+                          style: const TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16.0),
-            TextField(
-              controller: _heightController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Tinggi (cm)',
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed:
-                  _calculateBMI, // ketika button diklik maka akan menjalankan fungsi _calculateBMI
-              child: const Text('Hitung BMI'),
-            ),
-            const SizedBox(height: 16.0),
-            Text(
-              'Nama : ${User.name}',
-              style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w300,
-                  color: Colors.black),
-            ),
-            Text(
-              'BMI: ${_bmiResult.toStringAsFixed(2)}', // menampulkan hasil bmi dengan format 2 angka belakang ,
-              style: const TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.w300,
-                  color: Colors.black),
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
 
   void _calculateBMI() {
+    String keteranganBMI = "";
     double weight = double.tryParse(_weightController.text) ??
         0.0; // variable bertipe double yang diambil dari hasil controler yang dibuat
     double height = double.tryParse(_heightController.text) ?? 0.0;
@@ -116,8 +162,20 @@ class _BMICalculatorState extends State<BMICalculator> {
       double bmi = weight /
           ((height / 100) *
               (height / 100)); // rumus bmi dengan tinggi dalam satuan m
+
+      if (bmi < 18.5) {
+        keteranganBMI = "Kurus";
+      } else if (bmi >= 18.5 && bmi <= 24.9) {
+        keteranganBMI = "Normal atau sedang";
+      } else if (bmi >= 25 && bmi <= 29.9) {
+        keteranganBMI = "Berat atau gemuk";
+      } else {
+        keteranganBMI = "Obesitas";
+      }
+
       setState(() {
         _bmiResult = bmi;
+        _bmiKeterangan = keteranganBMI;
       });
     } else {
       // Tampilkan pesan error jika username atau password salah

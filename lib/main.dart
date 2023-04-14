@@ -22,7 +22,6 @@ class MyApp extends StatelessWidget {
         "/login": (context) =>
             const LoginPage(), // route untuk ke halaman login
         "/home": (context) => const HomePage(), // route untuk ke halaman home
-        // TODO : Tambahkan route lain
       },
       initialRoute: "/register", // route awal saat dijalankan aplikasinya
     );
